@@ -3,70 +3,48 @@ import './App.css';
 
 
 class App extends Component{
-
-  
-
   state = {
-    counter: 0,
-    posts:[{
-      id:1,
-      title:"título 1",
-      body: "o corpo "
-    },
-    {
-      id:2,
-      title:"título 2",
-      body: "o corpo "
-    },
-    {
-      id:3,
-      title:"título 3",
-      body: "o corpo "
-    },
-  ]
+    posts:[]
   }
 
-  timeoutUpdate = null;
 
-  handleTimeout = () => {
-    const { posts, counter } = this.state;
-    posts[0].title = "o título mudou"
-  
-     this.timeoutUpdate  = setTimeout(() =>{
-       this.setState({ posts, counter: counter + 1 })
-     }, 2000)
-  }
  componentDidMount(){
-  this.handleTimeout()
+  this.loadPosts()
  }
 
- componentDidUpdate(){
-   clearTimeout(this.timeoutUpdate)
-  this.handleTimeout()
- }
-
- componentWillUnmount(){
-  clearTimeout(this.timeoutUpdate)
- }
 
   loadPosts = async () =>{
-     fetch('https://viacep.com.br/ws/91040100/json/')
-    .then(response => response.json())
-    .then(posts => this.setState({ posts }))
+    const postsResponse = fetch('https://jsonplaceholder.typicode.com/posts')
+    const photosResponse = fetch('https://jsonplaceholder.typicode.com/photos')
+
+    const [posts, photos] = await Promise.all([postsResponse, photosResponse]);
+    
+    const postsJson = await posts.json();
+    const photosJson = await photos.json();
+    
+    const postsAndPhotos = postsJson.map((post, index) =>{
+      return { ...post,  cover: photosJson[index].url }
+    })
+    
+   this.setState({ posts: postsAndPhotos})
   }
 
   render(){
-    const { posts, counter } = this.state;
+    const { posts } = this.state;
      return (
-    <div className="App">
-      <h1>{counter}</h1>
+       <section className='container'>
+    <div className="posts">      
     {posts.map((post => 
-      <div key={post.id}>
+    <div className="post">
+      <img src={post.cover} alt={post.title}/>
+      <div key={post.id} className="post-content">
       <h1>{post.title}</h1>
       <h4>{post.body}</h4>
     </div>
+    </div>
       ))}
     </div>
+    </section>
   );
   }
 }
