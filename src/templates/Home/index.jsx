@@ -14,7 +14,7 @@ export class Home extends Component {
     page: 0,
     postPerPage: 5
   }
-
+  
   async componentDidMount() {
     await this.loadPosts()
   }
