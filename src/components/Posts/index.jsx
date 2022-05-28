@@ -1,3 +1,5 @@
+import './styles.css'
+
 import { PostCard } from '../../components/PostCard';
 
 export const Posts = ({posts}) => {
@@ -10,7 +12,6 @@ export const Posts = ({posts}) => {
             body={post.body}
             id={post.id}
             cover={post.cover}
-            email={post.email}
           />
         ))}
       </div>
